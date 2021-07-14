@@ -1,0 +1,30 @@
+service: creditmemo-pdf-service
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 128
+  timeout: 10
+  stage: dev
+  region: us-east-1
+  apiGateway:
+    binaryMediaTypes:
+      - "*/*"
+
+functions:
+  api:
+    handler: lambda.universal
+    events:
+      - http: ANY {proxy+}
+      - http: ANY /
+
+      - http:
+          path: /
+          method: get
+          cors:
+            origin: "*"      
+      - http:
+          path: generatePDF
+          method: post
+          cors:
+            origin: "*"      
