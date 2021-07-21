@@ -35,6 +35,24 @@ app.post('/generatePDF', async (req, res) => {
     }
 });
 
+app.post('/generatePDFTron', async (req, res) => {
+    const creditMemoJson = req.body;
+    try {
+        await generatePDF(creditMemoJson);
+        var data = fs.readFileSync(outputFile);
+        res.set('Access-Control-Allow-Origin', '*');
+        res.set('Access-Control-Allow-Headers', '*');
+        res.set('Access-Control-Allow-Methods', '*');
+        res.set('Access-Control-Allow-Credentials', true);        
+        res.set('Content-Type', 'application/pdf');      
+        res.end(data, 'base64')
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ err: 'Something went wrong: ' + err });
+    }
+});
+
+
 // const port = process.env.PORT || 3000;
 // app.listen(port, () => {
 //     console.log(`listening on port: ` + port);
