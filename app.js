@@ -21,7 +21,6 @@ app.get('/', (req, res) => {
 app.post('/generatePDF', async (req, res) => {
     const creditMemoJson = req.body;
     try {
-
         await generatePDF(creditMemoJson);
         var data = fs.readFileSync(outputFile);
         res.set('Access-Control-Allow-Origin', '*');
