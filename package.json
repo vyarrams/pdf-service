@@ -16,7 +16,11 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "@mapbox/node-pre-gyp": "^1.0.5",
+    "@pdftron/pdfnet-node": "^9.0.0-3",
+    "pdf-lib": "1.6.0",
+    "pizzip": "^3.0.6"
   },
   "devDependencies": {
     "nodemon": "^2.0.9",
