@@ -7,7 +7,7 @@ const mimeType = require("./modules/mimeType");
 
 const docxFiller = require("./helpers/docxFiller");
 
-const pdfAttacher = require("./helpers/pdfAttacher");
+const jsonProcessor = require("./helpers/jsonProcessor");
 const saveDoc = require("./helpers/savePDF");
 
 const inputFile = "./creditMemoPDFTron.docx";
@@ -53,123 +53,77 @@ app.post("/generateUsingPDFTron", async (req, res) => {
 
   const main = async () => {
     try {
-      let timestamp = new Date().getTime();
-      await commonUtils.downloadImagesToLocal(
-        creditMemoJson.fileUploads.propertyPics,
-        timestamp
-      );
+      // Variable initializations
       await PDFNet.startDeallocateStack();
-      let flatJson = commonUtils.getFlatObject(creditMemoJson);
-      flatJson = Object.assign(flatJson, creditMemoJson);
-      console.log(flatJson);
-
-      let docxFilledDoc = await docxFiller.run(
-        PDFNet,
-        flatJson,
-        "./files/copy_of_finalised_template_tron_28Jul_2.docx"
-      );
-      let templatesDoc = await PDFNet.PDFDoc.createFromFilePath(
-        "./files/header_templates.pdf"
-      );
-      let temp_before_PDFEMBED_doc = docxFilledDoc;
-      let pageCount = await temp_before_PDFEMBED_doc.getPageCount();
-      console.log(pageCount, "PageCount");
-      let newSplitDoc = await PDFNet.PDFDoc.create();
-      newSplitDoc.initSecurityHandler();
-      let newSplitDocIterator = await newSplitDoc.getPageIterator();
-      let copy_pages = [];
       let docArray = [];
-      let pending = true;
-      let templatePageNumber = 1;
-      for (let i = 1; i <= pageCount; ++i) {
-        const page = await temp_before_PDFEMBED_doc.getPage(i);
-        const txt = await PDFNet.TextExtractor.create();
-        await txt.begin(page);
-        line = await txt.getFirstLine();
-        console.log(
-          "Page Number",
-          i,
-          await line.isValid(),
-          "Is valid========================================"
+      let capRateJson = {};
+      let capIndex = 0;
+      let picDetailsJson = {};
+      let picIndex = 0;
+      let fileTypeInfo = [];
+
+      // Download all the files listed in fileuploads section of json to the tmp location
+      for (var fileType in creditMemoJson.fileUploads) {
+        await commonUtils.downloadFileUploads(
+          creditMemoJson.fileUploads[fileType]
         );
-        let lineText = "";
-        for (; await line.isValid(); line = await line.getNextLine()) {
-          for (
-            word = await line.getFirstWord();
-            await word.isValid();
-            word = await word.getNextWord()
-          ) {
-            lineText += await word.getString();
-          }
-          console.log(lineText);
-          if (lineText === "_embedpdf") {
-            break;
-          }
-          lineText = "";
+
+        if (fileType != "propertyPics") {
+          fileTypeInfo[fileType] = creditMemoJson.fileUploads[fileType].length;
         }
-        if (lineText === "_embedpdf") {
-          console.log(lineText);
-          copy_pages.push(page);
-          let imported_pages = await newSplitDoc.importPages(copy_pages);
-          for (var m = 0; m < imported_pages.length; ++m) {
-            newSplitDoc.pagePushBack(imported_pages[m]);
-          }
-          docArray.push(newSplitDoc);
-          let embeddedDoc = await pdfAttacher.run2(
-            PDFNet,
-            templatesDoc,
-            templatePageNumber,
-            creditMemoJson.files[templatePageNumber - 1]
+      }
+      console.log(fileTypeInfo);
+
+      // Process Json Array objects to make a flat json object out of them
+      jsonProcessor.getCapRateJson(creditMemoJson, capRateJson, capIndex);
+      jsonProcessor.getSitePicturesJson(
+        creditMemoJson,
+        picDetailsJson,
+        picIndex
+      );
+
+      // Create a flatJson using the raw json and all the processed json objects
+      let flatJson = {
+        ...creditMemoJson.loanGenericDetails,
+        ...creditMemoJson.loanStructure,
+        ...creditMemoJson.loanStructureAndCreditEnhancements,
+        ...creditMemoJson.propertyDetails,
+        ...creditMemoJson.borrowerAnalysis,
+        ...creditMemoJson.propertyFinancials,
+        ...capRateJson,
+        ...picDetailsJson,
+      };
+      flatJson["createdOn"] = creditMemoJson.createdOn;
+
+      // Fill out the docx templates with values from flatjson and push to the docArray
+      for (var template of commonUtils.templates) {
+        let templateFilled = await docxFiller.run(
+          PDFNet,
+          flatJson,
+          "./templates/" + template
+        );
+        docArray.push(templateFilled);
+      }
+
+      // Find the available files other than images in the tmp folder and push to the docArray
+      for (var fileType in fileTypeInfo) {
+        if (fileTypeInfo[fileType] > 0) {
+          let pdfDoc = await PDFNet.PDFDoc.createFromFilePath(
+            "./tmp/" + creditMemoJson.fileUploads[fileType][0].fileName
           );
-          docArray.push(embeddedDoc);
-          templatePageNumber++;
-          newSplitDoc = await PDFNet.PDFDoc.create();
-          newSplitDoc.initSecurityHandler();
-          newSplitDocIterator = await newSplitDoc.getPageIterator();
-          copy_pages = [];
-          pending = false;
-        } else {
-          pending = true;
-          copy_pages.push(page);
+          // We might have to do splice on docArray to inset docs at specific location
+          docArray.push(pdfDoc);
         }
       }
-      if (pending) {
-        console.log("pending");
-        let imported_pages = await newSplitDoc.importPages(copy_pages);
-        for (var m = 0; m < imported_pages.length; ++m) {
-          newSplitDoc.pagePushBack(imported_pages[m]);
-        }
-        docArray.push(newSplitDoc);
-      }
-      console.log(docArray.length, "Length of final array");
+
+      // Build the final pdf using all the docs in the docArray
       await saveDoc.runv3(PDFNet, docArray, outputFilePDFTron);
       await PDFNet.endDeallocateStack();
     } catch (err) {
       console.log(err);
+    } finally {
+      // Delete the tmp folder
     }
-
-    // try {
-    //   await PDFNet.startDeallocateStack();
-    //   let docxFilledDoc = await docxFiller.run(
-    //     PDFNet,
-    //     creditMemoJson,
-    //     inputFile
-    //   );
-    //   let pdfAttachedDoc1 = await pdfAttacher.run(
-    //     PDFNet,
-    //     "dummyTitle.pdf",
-    //     "newsletter.pdf"
-    //   );
-    //   await saveDoc.runv3(
-    //     PDFNet,
-    //     [docxFilledDoc, pdfAttachedDoc1],
-    //     outputFilePDFTron
-    //   );
-    //   await PDFNet.endDeallocateStack();
-    //   PDFNet.shutdown();
-    // } catch (err) {
-    //   console.log(err);
-    // }
   };
 
   PDFNetEndpoint(main, outputFilePDFTron, res);
