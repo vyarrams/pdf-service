@@ -1,0 +1,223 @@
+{
+  "borrowerAnalysis": {
+    "financialAdditional": "",
+    "financialStatements": "test",
+    "liquidity": "test",
+    "management": "test",
+    "managementAdditional": "",
+    "managementAdditionalInfo": "",
+    "marketFile": "",
+    "reputation": "test",
+    "secondaryRepayment": "test",
+    "sourcesLoanAmount": "8",
+    "sourcesMiscellaneous": "8",
+    "sourcesOther": "8",
+    "sourcesOwnerEquity": "8",
+    "sourcesTotal": "$32.00",
+    "usesEscrows": "9",
+    "usesLoanCosts": "9",
+    "usesOther": "9",
+    "usesPurchaseOfProperty": "9",
+    "usesTotal": "$36.00"
+  },
+  "capRateSensitivityData": [
+    {
+      "capRate": "7%",
+      "capRateMaxLoanAmount": "$662,876.69",
+      "capRateProposedValue": "$828,595.86"
+    },
+    {
+      "capRate": "7.5%",
+      "capRateMaxLoanAmount": "$618,684.91",
+      "capRateProposedValue": "$773,356.13"
+    },
+    {
+      "capRate": "8%",
+      "capRateMaxLoanAmount": "$580,017.10",
+      "capRateProposedValue": "$725,021.38"
+    }
+  ],
+  "createdOn": "7/21/2021, 4:23:18 PM",
+  "creditmemo_id": "a888090d-b115-4657-a185-8c5093a4406d",
+  "fileUploads": {
+    "appraisalReconciliationFiles": [
+
+    ],
+    "appraisalReport": [
+      {
+        "section" : 2,
+        "fileName": "generatedpdf.pdf",
+        "location": "https://creditmemo-file-upload-dev.s3.amazonaws.com/files/238d130e-5026-4517-8991-bf06b2c745a6.pdf"
+      }
+    ],
+    "bankingRelationships": [
+
+    ],
+    "collateralSiteImprovementFiles": [
+
+    ],
+    "financialStatementsAdditionalInfo": [
+
+    ],
+    "guarantorFinancialInfo": [
+
+    ],
+    "managementAdditionalInfo": [
+
+    ],
+    "marketAnalysisFiles": [
+
+    ],
+    "propertyPics": [
+      {
+        "fileName": "testProperty2.jpg",
+        "location": "https://creditmemo-file-upload-dev.s3.amazonaws.com/files/f1248f0b-7b2a-4029-9329-2416d8942699.jpg"
+      },
+      {
+        "fileName": "testProperty3.jpg",
+        "location": "https://creditmemo-file-upload-dev.s3.amazonaws.com/files/6d6e29c9-5694-48ce-b4d8-85c4264887e6.jpg"
+      }
+    ],
+    "rentalDocuments": [
+
+    ],
+    "tenantLeaseDocuments": [
+
+    ]
+  },
+  "interestSensitivityData": [
+    {
+      "annualLoanPayment": "$384,239.69",
+      "interestRate": "3.35%",
+      "interestRatePMT": "$32,019.97",
+      "resultingDSCR": "15.10"
+    },
+    {
+      "annualLoanPayment": "$394,682.12",
+      "interestRate": "3.60%",
+      "interestRatePMT": "$32,890.18",
+      "resultingDSCR": "14.70"
+    },
+    {
+      "annualLoanPayment": "$405,280.06",
+      "interestRate": "3.85%",
+      "interestRatePMT": "$33,773.34",
+      "resultingDSCR": "14.31"
+    },
+    {
+      "annualLoanPayment": "$416,031.73",
+      "interestRate": "4.10%",
+      "interestRatePMT": "$34,669.31",
+      "resultingDSCR": "13.94"
+    },
+    {
+      "annualLoanPayment": "$426,935.20",
+      "interestRate": "4.35%",
+      "interestRatePMT": "$35,577.93",
+      "resultingDSCR": "13.59"
+    },
+    {
+      "annualLoanPayment": "$437,988.50",
+      "interestRate": "4.60%",
+      "interestRatePMT": "$36,499.04",
+      "resultingDSCR": "13.24"
+    },
+    {
+      "annualLoanPayment": "$449,189.56",
+      "interestRate": "4.85%",
+      "interestRatePMT": "$37,432.46",
+      "resultingDSCR": "12.91"
+    },
+    {
+      "annualLoanPayment": "$460,536.24",
+      "interestRate": "5.10%",
+      "interestRatePMT": "$38,378.02",
+      "resultingDSCR": "12.59"
+    },
+    {
+      "annualLoanPayment": "$472,026.31",
+      "interestRate": "5.35%",
+      "interestRatePMT": "$39,335.53",
+      "resultingDSCR": "12.29"
+    }
+  ],
+  "lastModifiedOn": "7/21/2021, 4:26:40 PM",
+  "loanGenericDetails": {
+    "borrower": "testBorrower",
+    "date": "2021-07-24T04:00:00.000Z",
+    "loanAnalyst": "testLoanAnalyst",
+    "loanOfficer": "test Loan Officer",
+    "specificLoanPurpose": "test purpose"
+  },
+  "loanStructure": {
+    "balloonTerm": 20,
+    "BERR": "8.00%",
+    "capitalizationRate": "7.50%",
+    "fee": "0",
+    "interestRate": "4.35",
+    "loanAmortization": 300,
+    "loanAmount": "$6,500,000 ",
+    "ltvPercent": "80%",
+    "MDSSL": "0",
+    "proposedPayment": "$35,577.93",
+    "TDSCR": "1.15"
+  },
+  "loanStructureAndCreditEnhancements": {
+    "amortization": "test",
+    "creditEnhancemen": "test",
+    "guarantyConsiderations": "test",
+    "insuranceRequirements": "test",
+    "LoanAgreementAdditionalDetails": "test",
+    "loanPolicyExceptions": "",
+    "reservesEscrows": "test",
+    "singleAsset": "test",
+    "strengthsWeaknessesOfficerRecommendation": "test"
+  },
+  "marketAnalysis": {
+
+  },
+  "propertyDetails": {
+    "apartment": "",
+    "appraisedValue": "$6,500,000",
+    "city": "Alpharetta",
+    "projectName": "PDF Test",
+    "PropertyCollateralDescription": "test descriptoin",
+    "propertyType": "Warehouse",
+    "salesPrice": "$7,250,213 ",
+    "state": "Georgia",
+    "streetAddress": "910 Deerfield Crossing Dr Apt 7303",
+    "zipcode": "30004-1824"
+  },
+  "propertyFinancials": {
+    "actualAnnualDebtService": "$426,935.16",
+    "ADSAM": "$5,043,626.96",
+    "ADSSL": "$0.00",
+    "breakEvenOccupancyRate": "835.47%",
+    "debtYield": "89.23%",
+    "DSCR": "13.59",
+    "EAPRAM": "$77,335,613.00",
+    "FLAM": "$5,200,000.00",
+    "GPRINC": "$71,980.17",
+    "HGPRINC": "",
+    "HNOI": "",
+    "HTOE": "",
+    "justification": "",
+    "LTVAM": "$5,200,000.00",
+    "LTVRatio": "0.80",
+    "maxSustainableLoanAmount": "$76,788,175.70",
+    "MPDSCR": "$420,302.25",
+    "NOI": "$5,800,171.00",
+    "rentalIncomeInformation": "",
+    "reservesRequired": "N/A",
+    "selectedNOI": "1",
+    "tenantLeaseInformation": "",
+    "TOE": "$174,434.00 ",
+    "underwriterGPRINC": "$71,980.17",
+    "underwriterNOI": "$5,800,171.00",
+    "underwriterTOE": "$174,434.00 "
+  },
+  "status": "Complete",
+  "userId": "37e7be3c-fc97-44db-8f85-dcefd0cc0ecf",
+  "userName": "vijay_yarramsetty@capturisk.com",
+  "picLocation": {"image_url":"https://creditmemo-file-upload-dev.s3.amazonaws.com/files/f1248f0b-7b2a-4029-9329-2416d8942699.jpg", "width":100, "height":150}  
+}
