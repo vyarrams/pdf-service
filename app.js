@@ -1,5 +1,5 @@
 const { PDFNet } = require("@pdftron/pdfnet-node");
-const fs = require('fs');
+const fs = require("fs");
 
 const express = require("express");
 const cors = require("cors");
@@ -51,11 +51,11 @@ app.post("/generatePDF", async (req, res) => {
 
 app.post("/generateUsingPDFTron", async (req, res) => {
   const creditMemoJson = req.body;
-  let currentTimestamp = new Date().getTime();
-  var tempDir = './tmp/1627843258969/'//`./tmp/${currentTimestamp}/`;
+  // let currentTimestamp = new Date().getTime();
+  var tempDir = "./tmp/" + creditMemoJson.creditmemo_id + "/";
 
-  if (!fs.existsSync(tempDir)){
-      fs.mkdirSync(tempDir, { recursive: true });
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
   }
   const main = async () => {
     try {
@@ -68,18 +68,18 @@ app.post("/generateUsingPDFTron", async (req, res) => {
       let picIndex = 0;
       let fileTypeInfo = [];
 
-
       // Download all the files listed in fileuploads section of json to the tmp location
       for (var fileType in creditMemoJson.fileUploads) {
         await commonUtils.downloadFileUploads(
-          creditMemoJson.fileUploads[fileType], tempDir
+          creditMemoJson.fileUploads[fileType],
+          tempDir
         );
 
         if (fileType != "propertyPics") {
           fileTypeInfo[fileType] = creditMemoJson.fileUploads[fileType].length;
         }
       }
-      console.log(fileTypeInfo,'filetypeinfo');
+      console.log(fileTypeInfo, "filetypeinfo");
 
       // Process Json Array objects to make a flat json object out of them
       jsonProcessor.getCapRateJson(creditMemoJson, capRateJson, capIndex);
@@ -102,10 +102,10 @@ app.post("/generateUsingPDFTron", async (req, res) => {
         ...picDetailsJson,
       };
       flatJson["createdOn"] = creditMemoJson.createdOn;
-      console.log(flatJson,'Flat json')
-     // Fill out the docx templates with values from flatjson and push to the docArray
+      console.log(flatJson, "Flat json");
+      // Fill out the docx templates with values from flatjson and push to the docArray
       for (var template of commonUtils.templates) {
-        console.log(template,'template name')
+        console.log(template, "template name");
         let templateFilled = await docxFiller.run(
           PDFNet,
           flatJson,
@@ -114,44 +114,46 @@ app.post("/generateUsingPDFTron", async (req, res) => {
         docArray.push(templateFilled);
       }
 
-      console.log('Append pdf templates below')
+      console.log("Append pdf templates below");
       //Find the available files other than images in the tmp folder and push to the docArray
       for (var fileType in fileTypeInfo) {
         if (fileTypeInfo[fileType] > 0) {
-
-
-          creditMemoJson.fileUploads[fileType][0].fileName = 'main.pdf'
-          if(fs.existsSync){
+          // creditMemoJson.fileUploads[fileType][0].fileName = "main.pdf";
+          if (fs.existsSync) {
             let pdfDoc = await PDFNet.PDFDoc.createFromFilePath(
               tempDir + creditMemoJson.fileUploads[fileType][0].fileName
             );
-            // We might have to do splice on docArray to insert docs at specific location
-            docArray.splice(creditMemoJson.fileUploads[fileType][0].section,0,pdfDoc);
+            // Do splice on docArray to insert docs at specific location
+            docArray.splice(
+              commonUtils.fileUploadEmbedPositions[fileType],
+              0,
+              pdfDoc
+            );
           }
         }
       }
 
-      console.log('Before saving final pdf')
+      console.log("Before saving final pdf");
       // Build the final pdf using all the docs in the docArray
-      await saveDoc.runv3(PDFNet, docArray, tempDir+ 'creditMemoPDFTron.pdf');
+      await saveDoc.runv3(PDFNet, docArray, tempDir + "creditMemoPDFTron.pdf");
       await PDFNet.endDeallocateStack();
     } catch (err) {
       console.log(err);
-      if(err.type === 'InvalidPDF'){
+      if (err.type === "InvalidPDF") {
         res.send({
-          status : "401",
-          message : "Invalid external pdf/ external pdf not found"
-        })
+          status: "401",
+          message: "Invalid external pdf/ external pdf not found",
+        });
       }
     } finally {
-      console.log('Finally inside pdfnet')
+      console.log("Finally inside pdfnet");
     }
   };
 
-  PDFNetEndpoint(main, tempDir,tempDir+'creditMemoPDFTron.pdf', res);
+  PDFNetEndpoint(main, tempDir, tempDir + "creditMemoPDFTron.pdf", res);
 });
 
-const PDFNetEndpoint = (main, tempDir,pathname, res) => {
+const PDFNetEndpoint = (main, tempDir, pathname, res) => {
   PDFNet.runWithCleanup(main) // you can add the key to PDFNet.runWithCleanup(main, process.env.PDFTRONKEY)
     .then(() => {
       PDFNet.shutdown();
@@ -169,10 +171,11 @@ const PDFNetEndpoint = (main, tempDir,pathname, res) => {
     .catch((error) => {
       res.statusCode = 500;
       res.end(error);
-    }).finally(()=>{
-      console.log(tempDir)
-      //fs.rmdirSync(tempDir, { recursive: true, force: true })
     })
+    .finally(() => {
+      console.log(tempDir);
+      //fs.rmdirSync(tempDir, { recursive: true, force: true })
+    });
 };
 
 module.exports = app;

@@ -77,3 +77,20 @@ exports.templates = [
   "Page_6_Borrower_Analysis.docx",
   "Page_7_Loan_Addendum.docx",
 ];
+
+exports.fileUploadEmbedPositions = {
+  // after cover page and first page
+  marketAnalysisFiles: 2,
+  collateralSiteImprovementFiles: 3,
+  appraisalReconciliationFiles: 4,
+
+  // after property finance
+  financialStatementsAdditionalInfo: 5,
+  rentalDocuments: 6,
+  tenantLeaseDocuments: 7,
+
+  guarantorFinancialInfo: 8,
+  bankingRelationships: 9,
+  managementAdditionalInfo: 10,
+  appraisalReport: 11,
+};
