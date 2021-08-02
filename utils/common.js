@@ -18,22 +18,22 @@ exports.download_image = (url, image_path) => {
   );
 };
 
-exports.downloadImagesToLocal = async (imageObjects) => {
+exports.downloadFileUploads = async (listOfFiles,tempDir) => {
   try {
     let promiseArray = [];
-    imageObjects.forEach((image) => {
+    listOfFiles.forEach((image) => {
       promiseArray.push(
-        exports.download_image(image.location, `./tmp/${image.fileName}`)
+        exports.download_image(image.location, `${tempDir}${image.fileName}`)
       ); //todo dynamic for each request
     });
     await Promise.all(promiseArray);
-    console.log("Image download completed");
+    console.log(`Files download completed : ${promiseArray.length} `);
   } catch (e) {
     console.log(e, "Download image error");
   }
 };
 
-exports.downloadFileUploads = async (listOfFiles) => {
+exports.downloadFileUploads2 = async (listOfFiles) => {
   listOfFiles.forEach(function (file) {
     console.log("Downloading " + file.fileName);
     download(file, `./tmp/${file.fileName}`, function () {
