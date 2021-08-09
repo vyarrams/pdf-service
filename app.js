@@ -4,6 +4,7 @@ const fs = require('fs');
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const pdfAttacher = require("./helpers/pdfAttacher");
 
 const mimeType = require("./modules/mimeType");
 
@@ -83,6 +84,7 @@ app.post("/generateUsingPDFTron", async (req, res) => {
 
       // Process Json Array objects to make a flat json object out of them
       jsonProcessor.getCapRateJson(creditMemoJson, capRateJson, capIndex);
+      console.log('GET PICTURE JSON')
       jsonProcessor.getSitePicturesJson(
         creditMemoJson,
         picDetailsJson,
@@ -118,8 +120,6 @@ app.post("/generateUsingPDFTron", async (req, res) => {
       //Find the available files other than images in the tmp folder and push to the docArray
       for (var fileType in fileTypeInfo) {
         if (fileTypeInfo[fileType] > 0) {
-
-
           creditMemoJson.fileUploads[fileType][0].fileName = 'main.pdf'
           if(fs.existsSync){
             let pdfDoc = await PDFNet.PDFDoc.createFromFilePath(
@@ -132,8 +132,11 @@ app.post("/generateUsingPDFTron", async (req, res) => {
       }
 
       console.log('Before saving final pdf')
+      
       // Build the final pdf using all the docs in the docArray
-      await saveDoc.runv3(PDFNet, docArray, tempDir+ 'creditMemoPDFTron.pdf');
+      let finalDocArray = await pdfAttacher.pdfImageInserter(PDFNet,docArray,tempDir,flatJson)
+
+      await saveDoc.runv3(PDFNet, finalDocArray, tempDir+ 'creditMemoPDFTron.pdf');
       await PDFNet.endDeallocateStack();
     } catch (err) {
       console.log(err);
